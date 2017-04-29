@@ -34,6 +34,7 @@ router.post('/login', function(req, res) {
         error: "invaliduser",
         message: "User not found"
       });
+      return;
     }
     bcrypt.compare(req.body.password, results[0].password, function(err, answer) {
       if(err) {
