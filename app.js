@@ -5,8 +5,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
+var authRoutes = require('./routes/auth-routes');
+var articlesRoutes = require('./routes/articles-routes');
 var users = require('./routes/users');
+
+const secret = "don't tell anyone";
 
 var app = express();
 
@@ -22,7 +25,37 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
+app.use(function(err, req, res, next){
+  if(req.headers['authorization']) {
+    jwt.verify(req.headers['authorization'], secret, function(err, decoded) {      
+      if (err) {
+        return res.json({ 
+          success: false, 
+          error: 'tokenautherror',
+          message: 'Failed to authenticate token. Try logging out and logging in again' 
+        });
+      } else {
+        if(decoded == req.body.username)
+          next();
+        else
+          res.status(403).send({
+            success: false,
+            error: 'notoken',
+            message: 'Try logging out and logging in again'
+          });
+      }
+    });
+  } else {
+    res.status(403).send({
+      success: false,
+      error: 'notoken',
+      message: 'Try logging out and logging in again'
+    });
+  }
+});
+
+app.use('/', authRoutes);
+app.use('/', articlesRoutes);
 app.use('/users', users);
 
 // catch 404 and forward to error handler

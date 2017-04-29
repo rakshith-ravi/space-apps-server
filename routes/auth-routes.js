@@ -83,7 +83,7 @@ router.post('/signup', function(req, res) {
       return;
     }
     bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
-      connection.query("INSERT INTO users (?, ?, ?, ?, ?, ?)", [uuidV1(), req.body.username, hash, req.body.name, req.body.email, 0], function(error, results, fields) {
+      connection.query("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)", [uuid, req.body.username, hash, req.body.name, req.body.email, 0], function(error, results, fields) {
         if(error) {
           console.error(error);
           res.json({
