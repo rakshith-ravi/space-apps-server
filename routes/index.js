@@ -2,7 +2,9 @@ var express = require('express');
 var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
-var guid = require('guid');
+var config = require('./config.js');
+const uuidV1 = require('uuid/v1');
+
 var router = express.Router();
 
 const saltRounds = 10;
@@ -10,8 +12,8 @@ const secret = "don't tell anyone";
 
 var connection = mysql.createConnection({
   host: 'localhost',
-  user: 'root',
-  password: 'mysql',
+  user: config.mysqlUserName,
+  password: config.mysqlPassword,
   database: 'spaceapps'
 });
 connection.connect();
@@ -80,7 +82,7 @@ router.post('/signup', function(req, res) {
       return;
     }
     bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
-      connection.query("INSERT INTO users (?, ?, ?, ?, ?, ?)", [guid.create(), req.body.username, hash, req.body.name, req.body.email, 0], function(error, results, fields) {
+      connection.query("INSERT INTO users (?, ?, ?, ?, ?, ?)", [uuidV1(), req.body.username, hash, req.body.name, req.body.email, 0], function(error, results, fields) {
         if(error) {
           console.error(error);
           res.json({
