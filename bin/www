@@ -7,13 +7,14 @@
 var app = require('../app');
 var debug = require('debug')('space-apps-server:server');
 var http = require('http');
-var config = require('./config.js');
+var config = require('../config.js');
 
 /**
  * Get port from environment and store in Express.
  */
 
-app.set('port', config.port);
+var port = config.port;
+app.set('port', port);
 
 /**
  * Create HTTP server.

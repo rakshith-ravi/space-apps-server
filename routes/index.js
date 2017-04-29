@@ -2,7 +2,7 @@ var express = require('express');
 var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
-var config = require('./config.js');
+var config = require('../config.js');
 const uuidV1 = require('uuid/v1');
 
 var router = express.Router();
